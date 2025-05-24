@@ -16,7 +16,7 @@ Find beautiful, personalized Nito addresses directly in your browser, with maxim
 - **Custom Patterns**: Supports any valid bech32 pattern, prefix or suffix (`nito1q...`)  
 - **One-Click Copy**: Copy address, WIF, and private key securely  
 - **Modern UI**: Responsive, accessible, mobile-ready, and light/dark mode friendly  
-- **Open Source**: 100% MIT license  
+- **Open Source**: 100% GPL-3.0 license  
 
 ---
 
