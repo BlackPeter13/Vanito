@@ -52,7 +52,7 @@ Go to your deployed URL (e.g., `https://yourdomain.com/vanito/`).
 - Enter your custom pattern (1–30 chars, charset: `023456789acdefghjklmnpqrstuvwxyz`)
 - Choose Mode:
   - **Prefix** (`nito1q[pattern]...`)
-  - **Suffix** (`...q[pattern]`)
+  - **Suffix** (`nito1qxxx[pattern]`)
 - Select number of threads (1–32) — higher = faster (depending on your CPU)
 - Click “Generate” and wait for a match
 - When found, copy the address, WIF, or hex private key
