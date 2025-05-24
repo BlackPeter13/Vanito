@@ -38,7 +38,7 @@ cd vanito
 
 ### 2. Deploy to your web server
 
-Upload all files (`index.php` or `index.html`, `app.js`, `worker.js`, `style.css`, `logo.png`, `/libs/...`) to your static hosting or server.  
+Upload all files (`index.php`, `app.js`, `worker.js`, `style.css`, `logo.png`) to your static hosting or server.  
 No backend required (except PHP for `index.php` if used).
 
 ### 3. Open in your browser
