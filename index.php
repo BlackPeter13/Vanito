@@ -11,7 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Fast open-source Nito vanity address generator, personalized addresses, private key, WIF, multi-threaded." />
   <meta name="keywords" content="nito, vanity address, bitcoin, generator, wif, bech32, ripemd160, secp256k1, fast, secure, private key" />
-  <meta name="author" content="Nito Tools">
+  <meta name="author" content="@Presage0007">
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="stylesheet" href="style.css">
 </head>
