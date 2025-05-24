@@ -92,7 +92,7 @@ For maximum safety, use only the official site or host the code yourself.
 ## 🙏 Credits & License
 
 Created by **Presage0007**  
-**MIT License** – free for all use, fork, and modification
+**GPL-3.0 License** – free for all use, fork, and modification
 
 ---
 
