@@ -32,7 +32,7 @@ Find beautiful, personalized Nito addresses directly in your browser, with maxim
 ### 1. Clone the repository
 
 ```sh
-git clone https://github.com/Presage0007/vanito.git
+git clone https://github.com/Presage0007/Vanito.git
 cd vanito
 ```
 
