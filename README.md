@@ -5,7 +5,7 @@
   <img src="logo.png" alt="Nito Logo" width="96"/>
 </p>
 
-**Vanito** is an ultra-fast, open-source vanity address generator for the [Nito Network](https://nito.org/).  
+**Vanito** is an ultra-fast, open-source vanity address generator for the [Nito Network](https://nito.network/).  
 Find beautiful, personalized Nito addresses directly in your browser, with maximum security and speed!
 
 ---
