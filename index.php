@@ -1,6 +1,6 @@
 <!--
   Copyright (c) 2025 Presage0007
-  Licensed under the MIT License.
+  Licensed under the GPL-3.0 License.
   For more details, see the LICENSE file.
 -->
 <!DOCTYPE html>
