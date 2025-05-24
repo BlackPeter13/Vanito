@@ -98,4 +98,7 @@ Created by **Presage0007**
 
 ## 🤝 Donation
 
-If you like my work, you can donate to nito1q56ngvra0dg73k28xfakhtvarac2vulhpresage
+If you like my work, you can donate to 
+```sh
+nito1q56ngvra0dg73k28xfakhtvarac2vulhpresage
+```
