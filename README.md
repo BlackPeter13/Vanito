@@ -94,6 +94,8 @@ For maximum safety, use only the official site or host the code yourself.
 Created by **Presage0007**  
 **MIT License** – free for all use, fork, and modification
 
-## Donation
+---
+
+## 🤝 Donation
 
 If you like my work, you can donate nito1q56ngvra0dg73k28xfakhtvarac2vulhpresage
