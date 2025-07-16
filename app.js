@@ -1,41 +1,68 @@
 /*
  * Copyright (c) 2025 Presage0007
  * https://github.com/Presage0007
- * Licensed under the GPL-3.0 License.
+ * Licensed under the MIT License.
  * For more details, see the LICENSE file.
  */
 
 const BECH32_CHARSET = "023456789acdefghjklmnpqrstuvwxyz";
+const BASE58_CHARSET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 const patternInput = document.getElementById("pattern");
 const patternNote = document.getElementById("pattern-note");
 const modeInput = document.getElementById("mode");
 const threadsInput = document.getElementById("threads");
+const addressTypeInput = document.getElementById("addressType");
 const btnGenerate = document.getElementById("generate");
 const btnStop = document.getElementById("stop");
 const btnReset = document.getElementById("reset");
 const statusDiv = document.getElementById("status");
 const statsDiv = document.getElementById("stats");
 const resultDiv = document.getElementById("result");
+const patternLabel = document.querySelector('label[for="pattern"]');
 
 let workers = [];
 let searchActive = false;
 let totalTested = 0;
 let startTime = 0;
 
-function validatePattern(pattern) {
+// Dynamic display of charset in UI
+function updatePatternLabel(addressType) {
+  if (addressType === "legacy") {
+    patternLabel.innerHTML = `Custom pattern<br><small>(1–30 char., base58 charset: 123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz)</small>`;
+  } else {
+    patternLabel.innerHTML = `Custom pattern<br><small>(1–30 char., bech32 charset: 023456789acdefghjklmnpqrstuvwxyz)</small>`;
+  }
+}
+
+// Strict validation for bech32 AND base58 legacy
+function validatePattern(pattern, addressType) {
   if (!pattern) return { ok: false, msg: "Please enter a pattern." };
   if (pattern.length < 1 || pattern.length > 30) return { ok: false, msg: "Must be 1–30 characters." };
-  for (let c of pattern) {
-    if (!BECH32_CHARSET.includes(c)) return { ok: false, msg: "Invalid character: \"" + c + "\"" };
+  if (addressType === "bech32") {
+    for (let c of pattern) {
+      if (!BECH32_CHARSET.includes(c)) return { ok: false, msg: "Invalid character: \"" + c + "\"" };
+    }
+  }
+  if (addressType === "legacy") {
+    for (let c of pattern) {
+      if (!BASE58_CHARSET.includes(c)) return { ok: false, msg: "Invalid character for base58: \"" + c + "\"" };
+    }
   }
   return { ok: true, msg: "Valid pattern!" };
 }
 
-patternInput.addEventListener("input", () => {
-  const { ok, msg } = validatePattern(patternInput.value.trim().toLowerCase());
+function updateValidation() {
+  const addressType = addressTypeInput ? addressTypeInput.value : "bech32";
+  updatePatternLabel(addressType);
+  const { ok, msg } = validatePattern(patternInput.value.trim(), addressType);
   patternNote.textContent = msg;
   patternNote.className = ok ? "pattern-note valid" : "pattern-note invalid";
-});
+}
+
+patternInput.addEventListener("input", updateValidation);
+if (addressTypeInput) {
+  addressTypeInput.addEventListener("change", updateValidation);
+}
 
 function copyToClipboard(txt, btn) {
   navigator.clipboard.writeText(txt).then(() => {
@@ -63,10 +90,11 @@ function formatDuration(seconds) {
 }
 
 btnGenerate.onclick = () => {
-  const pattern = patternInput.value.trim().toLowerCase();
+  const pattern = patternInput.value.trim();
   const mode = modeInput.value;
   const threads = Math.max(1, Math.min(32, parseInt(threadsInput.value, 10) || 1));
-  const validation = validatePattern(pattern);
+  const addressType = addressTypeInput ? addressTypeInput.value : "bech32";
+  const validation = validatePattern(pattern, addressType);
   if (!validation.ok) {
     patternNote.textContent = validation.msg;
     patternNote.className = "pattern-note invalid";
@@ -86,13 +114,12 @@ btnGenerate.onclick = () => {
   // Multi-core workers
   workers = [];
   for (let i = 0; i < threads; i++) {
-    const worker = new Worker('./worker.js', { type: 'module' });
+    const worker = new Worker('./worker4.js', { type: 'module' });
     worker.onmessage = (e) => {
       if (!searchActive) return;
       if (e.data.type === 'found') {
         searchActive = false;
         statusDiv.textContent = '✅ Pattern found!';
-        // Copy-paste: button for each field
         resultDiv.innerHTML = `<b>Address:</b> <span style="font-family:monospace" id="addr">${e.data.address}</span>
   <button class="copy-btn" onclick="copyToClipboard('${e.data.address}', this)">Copy</button><br>
 <b>PrivKey (hex):</b> <span style="font-family:monospace" id="priv">${e.data.privHex}</span>
@@ -106,7 +133,6 @@ btnGenerate.onclick = () => {
         const elapsed = ((Date.now() - startTime) / 1000);
         const rate = totalTested / elapsed;
         statsDiv.textContent = `Keys tested: ${totalTested.toLocaleString()} | Time: ${formatDuration(elapsed)} | Speed: ${rate.toLocaleString(undefined,{maximumFractionDigits:0})} keys/s`;
-        // Fix copy on new buttons:
         for (const btn of resultDiv.querySelectorAll('.copy-btn')) {
           btn.onclick = function() {
             copyToClipboard(this.previousElementSibling.textContent, this);
@@ -126,7 +152,7 @@ btnGenerate.onclick = () => {
       searchActive = false;
       workers.forEach(w => w.terminate());
     };
-    worker.postMessage({ pattern, mode });
+    worker.postMessage({ pattern, mode, addressType });
     workers.push(worker);
   }
 };
@@ -152,8 +178,10 @@ btnReset.onclick = () => {
   btnReset.disabled = true;
 };
 
-// For copy/paste global (onclick dyn)
 window.copyToClipboard = copyToClipboard;
 
-// Automatic copyright year update
+// Set copyright year
 document.getElementById("copyright-year").textContent = new Date().getFullYear();
+
+// Initial call for correct label on load
+updatePatternLabel(addressTypeInput ? addressTypeInput.value : "bech32");
