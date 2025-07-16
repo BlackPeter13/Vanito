@@ -1,6 +1,6 @@
 <!--
   Copyright (c) 2025 Presage0007
-  Licensed under the GPL-3.0 License.
+  Licensed under the MIT License.
   For more details, see the LICENSE file.
 -->
 <!DOCTYPE html>
@@ -23,13 +23,22 @@
     <h1><span class="highlight">Nito</span> Vanity Address Generator</h1>
 
     <form id="vanity-form">
+      <div class="form-row half">
+        <div class="form-group half">
+          <label for="addressType">Address type</label>
+          <select id="addressType">
+            <option value="bech32">bech32 (nito1q...)</option>
+            <option value="legacy">Legacy (1...)</option>
+          </select>
+        </div>
+      </div>
       <div class="form-row">
         <div class="form-group wide">
           <label for="pattern">
             Custom pattern<br>
-            <small>(1–30 characters, bech32 charset: 023456789acdefghjklmnpqrstuvwxyz)</small>
+            <small>(1–30 char., bech32 charset: 023456789acdefghjklmnpqrstuvwxyz)</small>
           </label>
-          <input id="pattern" type="text" maxlength="30" placeholder="e.g.: superman" />
+          <input id="pattern" type="text" maxlength="30" placeholder="e.g.: superman" autocomplete="off" />
           <div id="pattern-note" class="pattern-note"></div>
         </div>
       </div>
@@ -37,7 +46,7 @@
         <div class="form-group half">
           <label for="mode">Mode</label>
           <select id="mode">
-            <option value="prefix">Prefix (after “nito1q”)</option>
+            <option value="prefix">Prefix (after “nito1q”/“1”)</option>
             <option value="suffix">Suffix</option>
           </select>
         </div>
