@@ -1,5 +1,5 @@
 
-# Vanito – Nito Vanity Address Generator
+# Vanito – Nito Vanity Address Generator V1.1
 
 <p align="center">
   <img src="logo.png" alt="Nito Logo" width="96"/>
@@ -13,7 +13,7 @@ Find beautiful, personalized Nito addresses directly in your browser, with maxim
 ## 🚀 Features
 
 - **Ultra-fast**: Multi-threaded (Web Worker) vanity search in your browser  
-- **Custom Patterns**: Supports any valid bech32 pattern, prefix or suffix (`nito1q...`)  
+- **Custom Patterns**: Supports any valid bech32 & Legacy pattern, prefix or suffix (`nito1q... or 1...`)  
 - **One-Click Copy**: Copy address, WIF, and private key securely  
 - **Modern UI**: Responsive, accessible, mobile-ready, and light/dark mode friendly  
 - **Open Source**: 100% GPL-3.0 license  
@@ -49,6 +49,7 @@ Go to your deployed URL (e.g., `https://yourdomain.com/vanito/`).
 
 ## ⚙️ Usage
 
+- Choose Address type
 - Enter your custom pattern (1–30 chars, charset: `023456789acdefghjklmnpqrstuvwxyz`)
 - Choose Mode:
   - **Prefix** (`nito1q[pattern]xxx`)
@@ -63,7 +64,7 @@ Go to your deployed URL (e.g., `https://yourdomain.com/vanito/`).
 ## 🧑‍💻 Technical Details
 
 - **Network**: Nito mainnet  
-- **Address format**: Bech32 (`nito1q...`)  
+- **Address format**: Bech32 (`nito1q...`) - Legacy (`1...`)
 - **Libraries**:
   - `noble-secp256k1`
   - `@noble/hashes`
@@ -102,3 +103,7 @@ If you like my work, you can donate to
 ```sh
 nito1q56ngvra0dg73k28xfakhtvarac2vulhpresage
 ```
+
+## ✏️ Changelog
+**07-17-2025**
+- Added support for Legacy Address
