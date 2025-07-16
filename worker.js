@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2025 Presage0007
  * https://github.com/Presage0007
- * Licensed under the GPL-3.0 License.
+ * Licensed under the MIT License.
  * For more details, see the LICENSE file.
  */
 
@@ -11,11 +11,11 @@ import { ripemd160 } from "https://esm.sh/@noble/hashes/ripemd160";
 import { bech32 } from "https://esm.sh/bech32";
 import bs58 from "https://esm.sh/bs58";
 
-// NITO config: update here if the spec changes (pubKeyHash/scriptHash not used for Bech32 segwit)
+// NITO config (MAINNET legacy: pubKeyHash = 0x00)
 const NITO_NETWORK = {
   messagePrefix: '\x18Nito Signed Message:\n',
   bech32:        'nito',
-  pubKeyHash:    0x6f,
+  pubKeyHash:    0x00,
   scriptHash:    0xc4,
   wif:           0x80,
   bip32: {
@@ -24,6 +24,7 @@ const NITO_NETWORK = {
   }
 };
 const BECH32_CHARSET = "023456789acdefghjklmnpqrstuvwxyz";
+const BASE58_CHARSET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
 function bytesToHex(arr) {
   return Array.from(arr).map(x => x.toString(16).padStart(2, '0')).join('');
@@ -32,13 +33,24 @@ function randomPrivKey() {
   return secpUtils.randomPrivateKey();
 }
 function privKeyToNitoAddress(privKey) {
-  // Standard bech32 : witver=0, witprog=hash160(compressed pubkey)
   const pubkey = getPublicKey(privKey, true); // compressed
   const pubkeyHash = ripemd160(sha256(pubkey));
-  // "0" (version segwit 0), then pubkeyHash (20 bytes)
   const words = bech32.toWords(pubkeyHash);
-  // For Nito, some networks require "0" (witver) first: this is standard BTC
   return bech32.encode(NITO_NETWORK.bech32, [0, ...words]);
+}
+function privKeyToLegacyAddress(privKey) {
+  const pubkey = getPublicKey(privKey, true);
+  const pubkeyHash = ripemd160(sha256(pubkey));
+  const prefix = NITO_NETWORK.pubKeyHash;
+  const payload = new Uint8Array(21);
+  payload[0] = prefix;
+  payload.set(pubkeyHash, 1);
+  const checksum = sha256(sha256(payload)).slice(0, 4);
+  let addrBytes = new Uint8Array(25);
+  addrBytes.set(payload, 0);
+  addrBytes.set(checksum, 21);
+  const addr = bs58.encode(addrBytes);
+  return addr;
 }
 function privKeyToWIF(privKey) {
   const prefix = NITO_NETWORK.wif;
@@ -53,25 +65,36 @@ function privKeyToWIF(privKey) {
   return bs58.encode(wifArr);
 }
 function getBech32Body(address) {
-  // "nito1q" + body (bech32)
   const prefix = "nito1q";
   return address.startsWith(prefix) ? address.slice(prefix.length) : "";
 }
 
 self.onmessage = function(ev) {
-  const pattern = (ev.data.pattern || "").toLowerCase();
+  const pattern = (ev.data.pattern || "");
   const mode = ev.data.mode || "prefix";
+  const addressType = ev.data.addressType || "bech32";
   const batch = 10000;
-  if (!pattern.length || pattern.length > 30 || [...pattern].some(c => !BECH32_CHARSET.includes(c))) {
+  // Strict type-based validation (bech32/base58)
+  if (
+    !pattern.length ||
+    pattern.length > 30 ||
+    (addressType === "bech32" && [...pattern].some(c => !BECH32_CHARSET.includes(c))) ||
+    (addressType === "legacy" && [...pattern].some(c => !BASE58_CHARSET.includes(c)))
+  ) {
     postMessage({ type: "error", error: "Invalid pattern" });
     return;
   }
   while (true) {
     for (let i = 0; i < batch; i++) {
       const priv = randomPrivKey();
-      const addr = privKeyToNitoAddress(priv);
-      const body = getBech32Body(addr);
-      let matched = false;
+      let addr, body, matched = false;
+      if (addressType === "legacy") {
+        addr = privKeyToLegacyAddress(priv);
+        body = addr.substring(1);
+      } else {
+        addr = privKeyToNitoAddress(priv);
+        body = getBech32Body(addr);
+      }
       if (mode === "prefix") {
         matched = body.startsWith(pattern);
       } else if (mode === "suffix") {
