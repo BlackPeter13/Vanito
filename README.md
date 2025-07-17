@@ -104,6 +104,8 @@ If you like my work, you can donate to
 nito1q56ngvra0dg73k28xfakhtvarac2vulhpresage
 ```
 
+---
+
 ## ✏️ Changelog
 **07-17-2025**
 - Added support for Legacy Address
